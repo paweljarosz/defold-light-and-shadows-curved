@@ -1,0 +1,110 @@
+name: "dof_composite"
+tags: "postfx"
+vertex_program: "/postfx/shaders/postfx_quad.vp"
+fragment_program: "/postfx/shaders/dof_composite.fp"
+vertex_space: VERTEX_SPACE_WORLD
+fragment_constants {
+  name: "focus_params"
+  type: CONSTANT_TYPE_USER
+  value {
+    x: 35.0
+    y: 12.0
+    z: 0.8
+    w: 1.35
+  }
+}
+fragment_constants {
+  name: "misc_params"
+  type: CONSTANT_TYPE_USER
+  value {
+    x: 1.0
+    y: 0.0
+    z: 0.0
+    w: 0.0
+  }
+}
+fragment_constants {
+  name: "depth_params"
+  type: CONSTANT_TYPE_USER
+  value {
+    x: 0.1
+    y: 400.0
+    z: 0.0
+    w: 0.0
+  }
+}
+fragment_constants {
+  name: "enable_params"
+  type: CONSTANT_TYPE_USER
+  value {
+    x: 1.0
+    y: 0.0
+    z: 0.0
+    w: 0.0
+  }
+}
+fragment_constants {
+  name: "tint_control"
+  type: CONSTANT_TYPE_USER
+  value {
+    x: 0.3
+    y: 0.0
+    z: 0.0
+    w: 0.0
+  }
+}
+fragment_constants {
+  name: "tint_near"
+  type: CONSTANT_TYPE_USER
+  value {
+    x: 1.0
+    y: 0.2
+    z: 0.2
+    w: 0.0
+  }
+}
+fragment_constants {
+  name: "tint_focus"
+  type: CONSTANT_TYPE_USER
+  value {
+    x: 0.2
+    y: 1.0
+    z: 0.2
+    w: 0.0
+  }
+}
+fragment_constants {
+  name: "tint_far"
+  type: CONSTANT_TYPE_USER
+  value {
+    x: 0.2
+    y: 0.4
+    z: 1.0
+    w: 0.0
+  }
+}
+samplers {
+  name: "tex0"
+  wrap_u: WRAP_MODE_CLAMP_TO_EDGE
+  wrap_v: WRAP_MODE_CLAMP_TO_EDGE
+  filter_min: FILTER_MODE_MIN_LINEAR
+  filter_mag: FILTER_MODE_MAG_LINEAR
+  max_anisotropy: 0.0
+}
+samplers {
+  name: "tex1"
+  wrap_u: WRAP_MODE_CLAMP_TO_EDGE
+  wrap_v: WRAP_MODE_CLAMP_TO_EDGE
+  filter_min: FILTER_MODE_MIN_LINEAR
+  filter_mag: FILTER_MODE_MAG_LINEAR
+  max_anisotropy: 0.0
+}
+samplers {
+  name: "tex2"
+  wrap_u: WRAP_MODE_CLAMP_TO_EDGE
+  wrap_v: WRAP_MODE_CLAMP_TO_EDGE
+  filter_min: FILTER_MODE_MIN_NEAREST
+  filter_mag: FILTER_MODE_MAG_NEAREST
+  max_anisotropy: 0.0
+}
+max_page_count: 0

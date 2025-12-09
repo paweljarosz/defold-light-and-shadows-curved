@@ -1,0 +1,15 @@
+mesh: "/kay_assets/KayKit/Assets/gltf/buildings/blue/building_home_B_blue.gltf"
+name: "building_home_B_blue"
+create_go_bones: false
+materials {
+  name: "hexagons_medieval"
+  material: "/light_and_shadows/materials/model/model.material"
+  textures {
+    sampler: "tex0"
+    texture: "/kay_assets/KayKit/Assets/fbx(unity)/buildings/blue/hexagons_medieval.png"
+  }
+  textures {
+    sampler: "tex1"
+    texture: "/kay_assets/KayKit/Assets/fbx(unity)/buildings/blue/hexagons_medieval.png"
+  }
+}

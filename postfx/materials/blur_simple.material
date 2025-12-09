@@ -1,0 +1,24 @@
+name: "blur_simple"
+tags: "postfx"
+vertex_program: "/postfx/shaders/postfx_quad.vp"
+fragment_program: "/postfx/shaders/blur_simple.fp"
+vertex_space: VERTEX_SPACE_WORLD
+fragment_constants {
+  name: "texel_size"
+  type: CONSTANT_TYPE_USER
+  value {
+    x: 0.001
+    y: 0.001
+    z: 0.0
+    w: 0.0
+  }
+}
+samplers {
+  name: "tex0"
+  wrap_u: WRAP_MODE_CLAMP_TO_EDGE
+  wrap_v: WRAP_MODE_CLAMP_TO_EDGE
+  filter_min: FILTER_MODE_MIN_LINEAR
+  filter_mag: FILTER_MODE_MAG_LINEAR
+  max_anisotropy: 0.0
+}
+max_page_count: 0

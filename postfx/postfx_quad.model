@@ -1,0 +1,7 @@
+mesh: "/postfx/postfx_quad.dae"
+name: "postfx_quad"
+create_go_bones: false
+materials {
+  name: "default"
+  material: "/postfx/materials/dof_composite.material"
+}

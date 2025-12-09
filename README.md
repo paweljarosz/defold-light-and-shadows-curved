@@ -1,3 +1,11 @@
+# Tiny Worlds Community Challenge
+
+This is a fork of a fork of the Light and Shadows for Defold made for fun for the (Defold Community Challenge: Tiny Worlds)[https://forum.defold.com/t/community-challenge-tiny-worlds/81931/80].
+
+This adds to the already awesome example of lighting with shadows and a curved world rendering few examples of a Depth of Field effect (including a full screen blur) and a possibility to add skybox based on (Defold Skybox example)[https://defold.com/examples/model/skybox/].
+
+And presents a Tiny Medieval Town using Kay Lousberg [Medieval Hexagon Pack](https://kaylousberg.itch.io/kaykit-medieval-hexagon).
+
 # Light and Shadows - Curved
 
 This fork is slightly modified from the Dragosha's original to demonstrate a [curved world](https://github.com/rgrams/defold-curved-world) shader effect.
@@ -59,6 +67,55 @@ Most important is:
 
 * `PROJECTION_RESOLUTION` = 400 - This constant indicates the size of the area on which the shadow is projected around the screen center. Smaller size is better shadow quality. This value also depends on camera zoom / world scale. Feel free to adjust it.
 
+
+### Depth of field post-processing
+
+The whole 3D world is now rendered into an offscreen buffer and blended back after a tilt-shift inspired depth of field pass. Defaults live in `postfx/dof.lua`, but you can tweak them at runtime by messaging the render script:
+
+```
+msg.post("@render:", "set_dof", {
+    enabled = true,
+    focus_distance = 28,
+    focus_range = 10,
+    max_blur = 0.9,
+    near_strength = 1.6,
+    far_strength = 1.1,
+    blur_version = 5, -- 1 = screen blur, 2 = depth single pass, 3 = separable, 4 = circular (4 dir), 5 = circular (8 dir)
+    tint_enabled = true,
+    tint_intensity = 0.3,
+})
+```
+
+`blur_version` progresses from the lightest to the most advanced filter:
+
+1. **Screen blur** - simple fullscreen blur in screen space. Depth is ignored, tinting is disabled, perfect for cheap vignette-style smearing.
+2. **Depth single pass** - one pass that already samples the depth texture and uses the circle of confusion (CoC) calculated in the prefilter stage.
+3. **Separable X→Y** - two passes (horizontal, then vertical) using the same separable shader, giving a smooth Gaussian-like result for moderate cost.
+4. **Circular 4 directions** - gathers samples in four directions (±X, ±Y) and an inner ring to approximate round bokeh without the full cost of the next mode.
+5. **Circular 8 directions** - the full gather shader with eight directions plus an inner ring; highest fidelity miniature look, but also the most texture fetches.
+6. **Disabled** - no blur at all; the scene is presented untouched so you can compare or turn off the effect temporarily.
+
+Every mode still uses the same `focus_distance`, `focus_range`, `max_blur`, `near_strength`, and `far_strength` parameters defined in `postfx/dof.lua`.
+Only the post processing quad reads from the new buffers, so the existing curved-world, lighting and shadow passes stay untouched.
+
+#### Tinting depth for debug/adjustments
+
+There is an option to enable "tinting" as a way to visually debug or adjust DoF params.
+ - Closer objects are tinted red
+ - Far/background - blue
+ - Focus area is tinted with green.
+Tinting can be toggled via `tint_enabled`/`tint_intensity`, and the colors themselves can be overridden with `tint_near_color`, `tint_focus_color`, and `tint_far_color`. Switching modes at runtime is as easy as sending another `set_dof` message with a different `blur_version`. Tip: send the message to update DoF in on_reload and after each adjustment - Hot Reload your game.
+
+### Modular render (DoF + skybox)
+
+The post-process (DoF effect) and skybox logic live in separate modules:
+
+- `postfx/dof_pass.lua` - creates RT buffers, updates DoF uniforms, renders depth/blur/composite passes, and handles the `set_dof` message.
+- `rendercam/skybox_pass.lua` - encapsulates skybox rendering (predicate, constants, world matrix).
+
+`rendercam/rendercam.render_script` just calls their APIs (`init`, `update_window`, `update_uniforms`/`apply`, `handle_message`, `final`), making it easier to swap passes or plug in an alternate render without touching the rest of the rendering pipeline.
+
+The example uses a CC0 skybox from [here](https://freestylized.com/all-skybox/).
 
 ### Materials
 

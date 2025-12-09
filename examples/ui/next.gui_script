@@ -1,9 +1,20 @@
 local si        = require 'helper.simple_input'
 local monarch   = require "monarch.monarch"
 local light_and_shadows = require "light_and_shadows.light_and_shadows"
+local dof       = require "postfx.dof"
 
 local current_example = 1
 local totals = 2
+local DOF_MAX = 6
+
+local function set_dof_label()
+    local version = dof.blur_version or 1
+    if version == 6 then
+        gui.set_text(gui.get_node("qlt1"), "off")
+    else
+        gui.set_text(gui.get_node("qlt1"), tostring(version))
+    end
+end
 
 
 function init(self)
@@ -24,8 +35,22 @@ function init(self)
         elseif light_and_shadows.shadow_quality == 3 then
             light_and_shadows.shadow_quality = 1
         end
-        gui.set_text(gui.get_node("qlt"), light_and_shadows.shadow_quality.."")
+        local text = light_and_shadows.shadow_quality == 3 and "off" or tostring(light_and_shadows.shadow_quality)
+        gui.set_text(gui.get_node("qlt"), text)
     end)
+
+    si.register("dof", function()
+        local next_version = (dof.blur_version % DOF_MAX) + 1
+        dof.set_blur_version(next_version)
+        if next_version == 6 then
+            gui.set_text(gui.get_node("qlt1"), "off")
+        else
+            gui.set_text(gui.get_node("qlt1"), tostring(next_version))
+        end
+        msg.post("@render:", "set_dof", { blur_version = next_version })
+    end)
+
+    set_dof_label()
 end
 
 function final(self)
@@ -39,5 +64,3 @@ function on_input(self, action_id, action)
         return true
     end
 end
-
-

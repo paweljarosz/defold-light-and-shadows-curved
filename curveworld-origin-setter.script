@@ -9,7 +9,7 @@ function init(self)
 	self.offset = go.get_position()
 	self.offset.y, self.offset.z = 0, 0
 	curveworld.set_origin(0, 0, 0)
-	curveworld.set_curve(0.005, 0.001)
+	curveworld.set_curve(0.002, 0.001)
 end
 
 function update(self, dt)

@@ -288,6 +288,12 @@ function M.get_cur_cam()
     return curCam.halfViewArea.x, curCam.halfViewArea.y
 end
 
+function M.get_depth_params()
+    if curCam then
+        return curCam.nearZ, curCam.farZ
+    end
+end
+
 function M.update_window_size(x, y)
     if x > 0 and y > 0 then
         M.window.x = x;  M.window.y = y

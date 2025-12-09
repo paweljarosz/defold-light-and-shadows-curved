@@ -1,0 +1,15 @@
+mesh: "/kay_assets/KayKit/Assets/gltf/buildings/neutral/wall_corner_A_gate.gltf"
+name: "wall_corner_A_gate"
+create_go_bones: false
+materials {
+  name: "hexagons_medieval"
+  material: "/light_and_shadows/materials/model/model.material"
+  textures {
+    sampler: "tex0"
+    texture: "/kay_assets/KayKit/Assets/fbx(unity)/buildings/neutral/hexagons_medieval.png"
+  }
+  textures {
+    sampler: "tex1"
+    texture: "/kay_assets/KayKit/Assets/fbx(unity)/buildings/neutral/hexagons_medieval.png"
+  }
+}

@@ -1,0 +1,11 @@
+attribute mediump vec4 position;
+attribute mediump vec2 texcoord0;
+
+varying mediump vec2 var_texcoord0;
+
+void main()
+{
+    var_texcoord0 = texcoord0;
+    vec2 clip = texcoord0 * 2.0 - 1.0;
+    gl_Position = vec4(clip, 0.0, 1.0);
+}

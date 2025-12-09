@@ -2,16 +2,20 @@
 local curveworld = require "curveworld.curveworld"
 local rendercam = require "rendercam.rendercam"
 local light_and_shadows = require "light_and_shadows.light_and_shadows"
+local dof_pass = require "postfx.dof_pass"
+local skybox_pass = require "rendercam.skybox_pass"
 local vp = rendercam.viewport
 
 local IDENTITY_MATRIX = vmath.matrix4()
 local CLEAR_COLOR = hash("clear_color")
 local WINDOW_RESIZED = hash("window_resized")
 local UPDATE_WINDOW = hash("update window")
+local SET_DOF = hash("set_dof")
 
 local function update_window(self)
     rendercam.update_window(render.get_window_width(), render.get_window_height())
     self.gui_proj = vmath.matrix4_orthographic(0, rendercam.window.x, 0, rendercam.window.y, -1, 1)
+    dof_pass.update_window(self)
 end
 
 function init(self)
@@ -29,6 +33,9 @@ function init(self)
     self.clear_color = vmath.vector4(0)
     self.constants = render.constant_buffer()
 
+    dof_pass.init(self)
+    skybox_pass.init(self)
+
     rendercam.configWin.x = render.get_width()
     rendercam.configWin.y = render.get_height()
     rendercam.update_window_size(render.get_window_width(), render.get_window_height())
@@ -44,6 +51,12 @@ function update(self)
     light_and_shadows.update(self)
     --
 
+    if self.scene_rt then
+        render.set_render_target(self.scene_rt)
+    else
+        render.set_render_target(render.RENDER_TARGET_DEFAULT)
+    end
+
     render.set_depth_func(render.COMPARE_FUNC_LESS)
     render.set_depth_mask(true)
     render.set_stencil_mask(0xff)
@@ -54,6 +67,7 @@ function update(self)
     local view = rendercam.calculate_view()
     local proj = rendercam.calculate_proj()
     self.view = view
+    self.proj = proj
     local cw_options = curveworld.get_draw_options(self, proj)
     local cw_const = cw_options.constants
     self.constants.curve = cw_const.curve
@@ -61,6 +75,8 @@ function update(self)
     local options = { frustum = cw_options.frustum, constants = self.constants }
     render.set_view(view)
     render.set_projection(proj)
+
+    skybox_pass.draw(self, view, proj)
 
     render.disable_state(render.STATE_STENCIL_TEST)
     render.enable_state(render.STATE_BLEND)
@@ -98,6 +114,10 @@ function update(self)
     render.draw(self.btile_pred, options)
     render.draw(self.particle_pred)
 
+    dof_pass.update_uniforms(self)
+    dof_pass.render_depth_pass(self, options)
+    dof_pass.apply(self, vp)
+
     render.set_blend_func(render.BLEND_SRC_ALPHA, render.BLEND_ONE_MINUS_SRC_ALPHA)
 
     -- Debug rendering - physics debug, draw_line
@@ -123,5 +143,11 @@ function on_message(self, message_id, message, sender)
         update_window(self)
     elseif message_id == UPDATE_WINDOW then -- sent by rendercam when a camera is activated ("window_resized" engine message requires data)
         update_window(self)
+    elseif message_id == SET_DOF then
+        dof_pass.handle_message(self, message_id, message)
     end
+end
+
+function final(self)
+    dof_pass.final(self)
 end

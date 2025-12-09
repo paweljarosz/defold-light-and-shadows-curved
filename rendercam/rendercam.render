@@ -27,3 +27,43 @@ materials {
   name: "sprite_back_extra_low"
   material: "/light_and_shadows/materials/sprite/light_sprite_back_extra_low.material"
 }
+materials {
+  name: "dof_prefilter"
+  material: "/postfx/materials/dof_prefilter.material"
+}
+materials {
+  name: "dof_blur"
+  material: "/postfx/materials/dof_blur.material"
+}
+materials {
+  name: "dof_composite"
+  material: "/postfx/materials/dof_composite.material"
+}
+materials {
+  name: "dof_model_depth"
+  material: "/postfx/materials/dof_model_depth.material"
+}
+materials {
+  name: "dof_sprite_depth"
+  material: "/postfx/materials/dof_sprite_depth.material"
+}
+materials {
+  name: "dof_blur_separable"
+  material: "/postfx/materials/dof_blur_separable.material"
+}
+materials {
+  name: "dof_blur_circular"
+  material: "/postfx/materials/dof_blur_circular.material"
+}
+materials {
+  name: "dof_blur_circular4"
+  material: "/postfx/materials/dof_blur_circular4.material"
+}
+materials {
+  name: "blur_simple"
+  material: "/postfx/materials/blur_simple.material"
+}
+materials {
+  name: "skybox"
+  material: "/assets/skybox/skybox.material"
+}
