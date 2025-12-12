@@ -183,9 +183,9 @@ local function mouse_look(self, action_id, action)
     end
 
     if self._right_down and action_id == nil then
-        -- Dragging with RMB adjusts yaw/pitch in a limited range.
-        self._cam_yaw = clamp_value(self._cam_yaw + action.dx * self._mouse_sens, self._mouse_yaw_min, self._mouse_yaw_max)
-        self._cam_pitch = clamp_value(self._cam_pitch - action.dy * self._mouse_sens, self._mouse_pitch_min, self._mouse_pitch_max)
+        -- Dragging with RMB adjusts yaw/pitch in a limited range (axes reversed per request).
+        self._cam_yaw = clamp_value(self._cam_yaw - action.dx * self._mouse_sens, self._mouse_yaw_min, self._mouse_yaw_max)
+        self._cam_pitch = clamp_value(self._cam_pitch + action.dy * self._mouse_sens, self._mouse_pitch_min, self._mouse_pitch_max)
         apply_yaw_pitch(self)
     end
 end

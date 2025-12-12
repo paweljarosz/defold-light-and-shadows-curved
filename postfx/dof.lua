@@ -1,11 +1,11 @@
 local M = {}
 
 M.enabled = true
-M.focus_distance = 140
-M.focus_range = 80
-M.max_blur = 0.4
-M.near_strength = 1.0
-M.far_strength = 1.4
+M.focus_distance = 200
+M.focus_range = 500
+M.max_blur = 0.6
+M.near_strength = 2.0
+M.far_strength = 3.0
 M.blur_version = 4
 
 M.tint_enabled = false

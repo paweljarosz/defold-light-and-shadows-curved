@@ -126,6 +126,8 @@ end
 function M.init(self)
     self.dof_prefilter_cb = render.constant_buffer()
     self.dof_blur_cb = render.constant_buffer()
+    self.dof_blur_cb_x = render.constant_buffer()
+    self.dof_blur_cb_y = render.constant_buffer()
     self.dof_composite_cb = render.constant_buffer()
     self.simple_blur_cb = render.constant_buffer()
     self.post_pred = render.predicate({"postfx"})
@@ -157,6 +159,11 @@ function M.update_uniforms(self)
 
     self.dof_blur_cb.focus_params = focus_params
     self.dof_blur_cb.blur_params = half_texel
+    -- Separate constant buffers per axis to avoid batched draw calls reusing mutated data.
+    self.dof_blur_cb_x.focus_params = focus_params
+    self.dof_blur_cb_x.blur_params = half_texel
+    self.dof_blur_cb_y.focus_params = focus_params
+    self.dof_blur_cb_y.blur_params = half_texel
 
     self.dof_composite_cb.focus_params = focus_params
     self.dof_composite_cb.misc_params = misc_params
@@ -253,9 +260,9 @@ function M.apply(self, viewport)
                 render.set_viewport(0, 0, self.dof_half_width, self.dof_half_height)
                 render.clear({ [render.BUFFER_COLOR_BIT] = vmath.vector4(0, 0, 0, 0) })
                 render.enable_texture(0, self.dof_prefilter_rt, render.BUFFER_COLOR_BIT)
-                self.dof_blur_cb.blur_direction = vmath.vector4(1, 0, 0, 0)
+                self.dof_blur_cb_x.blur_direction = vmath.vector4(1, 0, 0, 0)
                 render.enable_material("dof_blur_separable")
-                render.draw(self.post_pred, { constants = self.dof_blur_cb })
+                render.draw(self.post_pred, { constants = self.dof_blur_cb_x })
                 render.disable_material()
                 render.disable_texture(0)
 
@@ -263,9 +270,9 @@ function M.apply(self, viewport)
                 render.set_viewport(0, 0, self.dof_half_width, self.dof_half_height)
                 render.clear({ [render.BUFFER_COLOR_BIT] = vmath.vector4(0, 0, 0, 0) })
                 render.enable_texture(0, self.dof_blur_rt, render.BUFFER_COLOR_BIT)
-                self.dof_blur_cb.blur_direction = vmath.vector4(0, 1, 0, 0)
+                self.dof_blur_cb_y.blur_direction = vmath.vector4(0, 1, 0, 0)
                 render.enable_material("dof_blur_separable")
-                render.draw(self.post_pred, { constants = self.dof_blur_cb })
+                render.draw(self.post_pred, { constants = self.dof_blur_cb_y })
                 render.disable_material()
                 render.disable_texture(0)
                 final_blur_target = self.dof_prefilter_rt

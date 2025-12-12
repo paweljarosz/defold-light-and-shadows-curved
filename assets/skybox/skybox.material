@@ -10,6 +10,10 @@ vertex_constants {
   name: "world"
   type: CONSTANT_TYPE_WORLD
 }
+vertex_constants {
+  name: "sky_offset"
+  type: CONSTANT_TYPE_USER
+}
 samplers {
   name: "cubemap"
   wrap_u: WRAP_MODE_CLAMP_TO_EDGE
